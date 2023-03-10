@@ -11,16 +11,16 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @ApiTags('API')
-  @ApiResponse({status: 201, type: CreateUserDTO})
+  @ApiResponse({ status: 201, type: CreateUserDTO })
   @Post('register')
   register(@Body() dto: CreateUserDTO): Promise<CreateUserDTO> {
     return this.authService.registerUsers(dto);
   }
 
   @ApiTags('API')
-  @ApiResponse({status: 200, type: AuthUserResponse})
+  @ApiResponse({ status: 200, type: AuthUserResponse })
   @Post('login')
-  login(@Body() dto: UserLoginDTO): Promise<any> {
+  login(@Body() dto: UserLoginDTO): Promise<AuthUserResponse> {
     return this.authService.loginUser(dto);
   }
 }
