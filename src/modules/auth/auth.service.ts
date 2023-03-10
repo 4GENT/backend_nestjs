@@ -16,13 +16,18 @@ export class AuthService {
   ) {}
 
   async registerUsers(dto: CreateUserDTO): Promise<CreateUserDTO> {
-    const existUser = await this.userService.findUserByEmail(dto.email);
+    try {
+      const existUser = await this.userService.findUserByEmail(dto.email);
     if (existUser) throw new BadRequestException(AppError.USER_EXIST);
     return this.userService.createUser(dto);
+    } catch (e) {
+      throw new Error(e)
+    }
   }
 
   async loginUser(dto: UserLoginDTO): Promise<AuthUserResponse> {
-    const existUser = await this.userService.findUserByEmail(dto.email);
+    try {
+      const existUser = await this.userService.findUserByEmail(dto.email);
     if (!existUser) throw new BadRequestException(AppError.USER_NOT_EXIST);
     const validatePassword = await bcrypt.compare(
       dto.password,
@@ -32,5 +37,8 @@ export class AuthService {
     const user = await this.userService.publicUser(dto.email);
     const token = await this.tokenService.generateJwtToken(user);
     return { user, token };
+    } catch (e) {
+      throw new Error(e)
+    }
   }
 }
