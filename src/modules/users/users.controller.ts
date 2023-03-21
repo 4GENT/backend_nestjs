@@ -1,7 +1,14 @@
-import { Body, Controller, Delete, Patch, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Patch,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDTO } from './dto';
-import { JwtAuthGuard } from 'src/guards/jwt-guard';
+import { JwtAuthGuard } from '../../guards/jwt-guard';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('users')
@@ -17,13 +24,13 @@ export class UsersController {
     @Req() request,
   ): Promise<UpdateUserDTO> {
     const user = request.user;
-    return this.userService.updateUser(user.email, updateDto);
+    return this.userService.updateUser(user.id, updateDto);
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete()
   deleteUser(@Req() request): Promise<boolean> {
-    const user = request.user
-    return this.userService.deleteUser(user.email)
+    const user = request.user;
+    return this.userService.deleteUser(user.email);
   }
 }

@@ -1,16 +1,26 @@
-import { Controller, Body, Req, Post, UseGuards, Get, Patch, Delete, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { WatchlistService } from './watchlist.service';
 import { WatchListDTO } from './dto';
-import { JwtAuthGuard } from 'src/guards/jwt-guard';
-import { CreateAssetResponse } from './response';
+import { JwtAuthGuard } from '../../guards/jwt-guard';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CreateAssetResponse, GetUserAssetsResponse } from './response';
+import { WatchList } from './models/watchlist.model';
 
 @Controller('watchlist')
 export class WatchlistController {
   constructor(private readonly watchlistService: WatchlistService) {}
 
   @ApiTags('API')
-  @ApiResponse({status: 201, type: CreateAssetResponse})
+  @ApiResponse({ status: 201, type: CreateAssetResponse })
   @UseGuards(JwtAuthGuard)
   @Post('create')
   createAsset(
@@ -22,7 +32,16 @@ export class WatchlistController {
   }
 
   @ApiTags('API')
-  @ApiResponse({status: 200})
+  @ApiResponse({ status: 200, type: GetUserAssetsResponse })
+  @UseGuards(JwtAuthGuard)
+  @Get('get-elements')
+  getUserAssets(@Req() request): Promise<WatchList[]> {
+    const user = request.user;
+    return this.watchlistService.getUserAssets(user.id);
+  }
+
+  @ApiTags('API')
+  @ApiResponse({ status: 200 })
   @UseGuards(JwtAuthGuard)
   @Delete()
   deleteAsset(@Query('id') assetId: string, @Req() request): Promise<boolean> {
